@@ -1,6 +1,6 @@
 """
 Safelist V5 by J0nahG
-An semi-automated safelisting program for the Celestia safelist.
+A semi-automated safelisting program for the Celestia safelist.
 Requires a private Celestia API key.
 Please visit https://api.duel.dev for more information about Celestia!
 
