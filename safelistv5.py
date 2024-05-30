@@ -1,24 +1,3 @@
-"""
-Safelist V5 by J0nahG
-A semi-automated safelisting program for the Celestia safelist.
-Requires a private Celestia API key.
-Please visit https://api.duel.dev for more information about Celestia!
-
-Available commands:
-    /j add <player>     - Adds <player> to the safelist queue
-    /j remove <player>  - Removes <player> from the safelist queue
-    /j clear            - Clears the safelist queue
-    /j show             - Shows the safelist queue on-screen
-    /j hide             - Hides the safelist queue on-screen
-    /j confirm          - Adds all players from the queue to the Celestia safelist
-    /j user <player>    - Sets the current user to <player> (used for win detection)
-    /j key <key>        - Sets Celestia API key to <key>
-    /j auto             - Enables automatically safelisting players in the queue on game win
-    /j manual           - Disables automatically safelisting players in the queue on game win
-"""
-
-
-
 import tkinter as tk
 from tkinter import filedialog as fd
 from tkinter import simpledialog as sd
@@ -27,7 +6,6 @@ import json
 import re
 import aiohttp
 import asyncio
-
 
 
 def replace_message(widget: tk.Text, message: str):
