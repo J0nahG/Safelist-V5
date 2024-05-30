@@ -38,3 +38,4 @@ pip install -r requirements.txt
 * /j key "key"        - Sets Celestia API key to "key"
 * /j auto             - Enables automatically safelisting players in the queue on game win
 * /j manual           - Disables automatically safelisting players in the queue on game win
+* /j kill            - Closes the program (pressing the "end" key also works)

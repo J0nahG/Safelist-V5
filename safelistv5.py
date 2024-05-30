@@ -157,7 +157,9 @@ class Log_File():
                         if next_space != -1:
                             self.user = content[index + len(userPattern):next_space]
                         else:
-                            self.user = "NA"
+                            self.user = "error"
+                    else:
+                        self.user = "error"
 
                     logFile.seek(0, 2)
                     self.logLocation = logFile.tell()
@@ -357,6 +359,9 @@ class Log_File():
 
             elif command.startswith("manual"):
                 self.auto = False
+
+            elif command.startswith("kill"):
+                self.overlay._close_overlay()
 
     def setuser(self, ign):
         """
