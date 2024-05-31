@@ -25,6 +25,12 @@ def add_line(widget: tk.Text, message: str):
     widget.insert("end", f"\n{message}")
     widget.config(state="disabled")
 
+def clean_string(input_string: str):
+    pattern = r'[^a-zA-Z0-9_]'
+    parts = re.split(pattern, input_string, maxsplit=1)
+    cleaned_string = parts[0]
+    return cleaned_string
+
 
 class Overlay():
     """
@@ -78,6 +84,7 @@ class Overlay():
         """
         Closes the overlay.
         """
+        self.logs.event_loop.close()
         self.root.destroy()  # Close the window
 
     def _check_key_press(self):
@@ -103,6 +110,7 @@ class Log_File():
         self.settings = {}
         self.error = False
         self.auto = False
+        self.event_loop = asyncio.new_event_loop()
 
         try:
             with open("safelist_settings.json", "r") as settingsFile:
@@ -155,7 +163,7 @@ class Log_File():
                     if index != -1:
                         next_space = content.find("\n", index + len(userPattern))
                         if next_space != -1:
-                            self.user = content[index + len(userPattern):next_space]
+                            self.user = clean_string(content[index + len(userPattern):next_space])
                         else:
                             self.user = "error"
                     else:
@@ -235,7 +243,7 @@ class Log_File():
                         try:
                             newLines[-1] = f"{newLines[-1].rstrip()} {newLine.lstrip()}"
                         except:
-                            print("An unknown error has occured. (0006)")
+                            pass
 
         except FileNotFoundError:
             print("Invalid log file.")
@@ -270,16 +278,15 @@ class Log_File():
 
         if line.endswith("FINAL KILL!"):
             # Final Kill
-            player = line.split(" ")[0]
-            loop = asyncio.get_event_loop()
-            loop.run_until_complete(self.addPlayer(player))
+            player = clean_string(line.split(" ")[0])
+            self.event_loop.run_until_complete(self.addPlayer(player))
 
         elif line == "Protect your bed and destroy the enemy beds.":
             # Game start
             self.queue.clear()
 
         elif line.startswith("You are now nicked as "):
-            ign = line.replace("You are now nicked as ", "", 1).rstrip("!")
+            ign = clean_string(line.replace("You are now nicked as ", "", 1).rstrip("!"))
             self.setuser(ign)
 
         elif line.strip() == "Your nick has been reset!":
@@ -292,10 +299,10 @@ class Log_File():
                     if index != -1:
                         next_space = content.find("\n", index + len(userPattern))
                         if next_space != -1:
-                            ign = content[index + len(userPattern):next_space]
+                            ign = clean_string(content[index + len(userPattern):next_space])
 
             except:
-                ign = "NA"
+                ign = "error"
 
             self.setuser(ign)
 
@@ -309,7 +316,7 @@ class Log_File():
             for pattern in self.GameEndPatterns:
                 if line.startswith(pattern):
                     line = line.replace(pattern, "", 1)
-                    winners = [i.split()[-1] for i in line.split(',')]
+                    winners = [clean_string(i.split()[-1]) for i in line.split(',')]
 
                     if self.user in winners:
                         for winner in winners:
@@ -326,12 +333,11 @@ class Log_File():
                 self.queue.clear()
 
             elif command.startswith("add"):
-                player = command.replace("add ", "", 1).strip()
-                loop = asyncio.get_event_loop()
-                loop.run_until_complete(self.addPlayer(player))
+                ign = clean_string(command.replace("add ", "", 1).strip())
+                self.event_loop.run_until_complete(self.addPlayer(ign))
 
             elif command.startswith("remove"):
-                ign = command.replace("remove ", "", 1).strip()
+                ign = clean_string(command.replace("remove ", "", 1).strip())
                 self.queue.remove(ign)
 
             elif command.startswith("show"):
@@ -344,7 +350,7 @@ class Log_File():
                 self.queue.confirm()
 
             elif command.startswith("user"):
-                ign = command.replace("user ", "", 1).strip()
+                ign = clean_string(command.replace("user ", "", 1).strip())
                 self.setuser(ign)
 
             elif command.startswith("key"):
@@ -444,11 +450,10 @@ class Safelist_Queue():
         """
         Adds players in the safelist queue to the Celestia safelist.
         """
-        loop = asyncio.get_event_loop()
         data = []
         for player in self.queue.keys():
             data.append({'uuid': self.queue[player]['id'], 'type': 'safe'})
-        loop.run_until_complete(self.safelistWorker(data))
+        self.log_file.event_loop.run_until_complete(self.safelistWorker(data))
         self.clear()
 
     async def safelistWorker(self, payload: list):
