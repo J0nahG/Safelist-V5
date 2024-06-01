@@ -355,7 +355,6 @@ class Log_File():
 
             elif command.startswith("key"):
                 key = command.replace("key", "", 1).strip()
-                print(key)
                 self.celestia_key = key
                 self.settings["celestia_key"] = key
                 self.update_settings()
