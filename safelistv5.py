@@ -157,7 +157,11 @@ class Log_File():
             try:
                 with open(self.logFilePath, "r") as logFile:
                     content = logFile.read()
-                    userPattern = "Setting user: "
+                    if "lunar" in self.logFilePath:
+                        userPattern = "[LC] Setting user: "
+                    else:
+                        userPattern = "Setting user: "
+
                     index = content.find(userPattern)
 
                     if index != -1:
