@@ -21,9 +21,15 @@ pip install -r requirements.txt
 ```
 
 ## To Use:
+* Activate the virtual environment (if not already active)
+```shell
+venv\Scripts\activate
+```
 * Run the program
-* Select your log file
-* Input your Celestia API key
+```shell
+python safelistv5.py
+```
+* Select your log file and input your Celestia API key (first time only)
 * Play bedwars!
 * Players will automatically be queued on final kill, but you can use the commands below to control exactly who gets safelisted
 
